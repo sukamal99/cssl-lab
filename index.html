@@ -24,14 +24,46 @@
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  html { scroll-behavior: smooth; }
-
   body {
     font-family: 'Source Sans 3', sans-serif;
     background: var(--cream);
     color: var(--text);
     line-height: 1.7;
   }
+
+  /* ─── PAGE SWITCHING ─── */
+  section {
+    display: none;
+    animation: pageIn 0.38s ease both;
+  }
+  section.page-active { display: block; }
+  @keyframes pageIn {
+    from { opacity:0; transform:translateY(18px); }
+    to   { opacity:1; transform:translateY(0); }
+  }
+
+  /* page breadcrumb bar */
+  .page-breadcrumb {
+    position: fixed; top: 64px; left: 0; right: 0; z-index: 90;
+    background: rgba(250,248,242,0.96);
+    border-bottom: 1px solid var(--cream-dark);
+    padding: 7px 2.5rem;
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace;
+    display: flex; align-items: center; gap: 8px;
+    backdrop-filter: blur(6px);
+    transition: opacity 0.2s;
+  }
+  .page-breadcrumb.hidden { display: none; }
+  .page-breadcrumb .crumb-home { color: var(--green-mid); text-decoration: none; }
+  .page-breadcrumb .crumb-home:hover { text-decoration: underline; }
+  .page-breadcrumb .crumb-sep { opacity: 0.4; }
+  .page-breadcrumb .crumb-current { color: var(--green-dark); font-weight: 600; }
+
+  /* push non-home sections below nav+breadcrumb */
+  section:not(#home).page-active { padding-top: 4.5rem; }
+  #home.page-active { padding-top: 0; min-height: 100vh; }
 
   /* ─── NAV ─── */
   nav {
@@ -734,6 +766,13 @@
     <li><a href="#contact">Contact</a></li>
   </ul>
 </nav>
+<!-- ═══ BREADCRUMB ═══ -->
+<div class="page-breadcrumb hidden" id="breadcrumb">
+  <a href="#home" class="crumb-home" onclick="showPage('home')">CSSL Home</a>
+  <span class="crumb-sep">/</span>
+  <span class="crumb-current" id="crumb-label">—</span>
+</div>
+
 
 <!-- ═══ HERO ═══ -->
 <section id="home">
@@ -1008,7 +1047,7 @@
           <h4>Kolkata Direct Aid Program 2025–2026</h4>
           <p>Strengthening women-farmers for resilient livelihoods in Sundarbans. Australian Aid, Government of Australia.</p>
           <div class="funding-amount">AUD $10,000</div>
-          <div class="funding-period">Jan 2026 – Dec 2026 · Principal Investigator</div>
+          <div class="funding-period">Completed · Principal Investigator</div>
         </div>
       </div>
 
@@ -1048,12 +1087,12 @@
           <h4>Seaweed-Based Nutrient Management in Rice</h4>
           <p>Evaluation of seaweed-based nutrient management on transplanted rainy rice in three agro-climatic zones of West Bengal.</p>
           <div class="funding-amount">INR 2.2 Lakh</div>
-          <div class="funding-period">Completed· Co-Principal Investigator</div>
+          <div class="funding-period">Completed · Co-Principal Investigator</div>
         </div>
       </div>
-
-            <div class="funding-card">
-        <div class="funder-badge in">IRRI<br>Philippiness</div>
+	  
+	    <div class="funding-card">
+          <div class="funder-badge in">IRRI<br>Philippiness</div>
         <div>
           <h4>STIB Lab</h4>
           <p>Supporting Impact Assessment and Conducting Longitudinal Studies to Facilitate the Implementation of Climate-Smart, Gender-Responsive STIBs in the Learning Labs for Enhancing Women's Empowerment and Resilience</p>
@@ -1091,7 +1130,7 @@
         <div class="area">APSIM Modelling · Climate Risk · Cropping Systems · Coastal Agriculture</div>
       </div>
 
-      <div class="team-card">
+		<div class="team-card">
         <div class="team-avatar">●</div>
         <h4>Anannya Dhar</h4>
         <div class="role">Doctoral Researcher (Ongoing) and Former DST INSPIRE Fellow</div>
@@ -1122,9 +1161,10 @@
       <div class="team-card team-open">
         <div class="team-avatar">+</div>
         <h4>Open Positions</h4>
-        <div class="role">PhD / Postdoc / MSc</div>
+        <div class="role">Doctoral Researcher</div>
         <div class="area">Interested in joining? Contact Dr. Sarkar to discuss opportunities in crop modelling and climate-smart agriculture.</div>
       </div>
+
 
     </div>
   </div>
@@ -1571,10 +1611,10 @@
             </div>
             <span class="link-arrow">↗</span>
           </a>
-          <a href="https://www.rkmvu.ac.in/sard/" target="_blank" class="link-card">
+          <a href="https://narendrapur.rkmvu.ac.in/" target="_blank" class="link-card">
             <div>
-              <div class="link-card-label">RKMVERI – School of Agriculture and Rural Development</div>
-              <div class="link-card-url">https://narendrapur.rkmvu.ac.in/</div>
+              <div class="link-card-label">RKMVERI – School of Agriculture</div>
+              <div class="link-card-url">rkmvu.ac.in/sard</div>
             </div>
             <span class="link-arrow">↗</span>
           </a>
@@ -1593,7 +1633,7 @@
 <footer>
   <p style="margin-bottom:6px;">
     <strong style="color:rgba(255,255,255,0.7);">Crops & System Simulation Lab (CSSL)</strong> · 
-    Divsion of Agronomy, School of Agriculture and Rural Development, RKMVERI, Narendrapur, Kolkata 700103
+    School of Agriculture and Rural Development, RKMVERI, Narendrapur, Kolkata 700103
   </p>
   <p>
     Led by <a href="https://scholar.google.co.in/citations?user=46v-V-EAAAAJ&hl=en" target="_blank">Dr. Sukamal Sarkar</a> · 
@@ -1604,21 +1644,94 @@
 </footer>
 
 <script>
-  // Scrollspy
-  const sections = document.querySelectorAll('section[id]');
-  const navLinks = document.querySelectorAll('.nav-links a');
+  const PAGE_TITLES = {
+    home: 'CSSL – Crops & System Simulation Lab',
+    about: 'About – CSSL',
+    research: 'Research – CSSL',
+    publications: 'Publications – CSSL',
+    funding: 'Funding – CSSL',
+    team: 'Team – CSSL',
+    collaborators: 'Collaborators – CSSL',
+    awards: 'Awards – CSSL',
+    news: 'News & Social Media – CSSL',
+    contact: 'Contact – CSSL'
+  };
 
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        navLinks.forEach(a => a.classList.remove('active'));
-        const active = document.querySelector(`.nav-links a[href="#${entry.target.id}"]`);
-        if (active) active.classList.add('active');
+  const PAGE_LABELS = {
+    home: 'Home',
+    about: 'About the Lab',
+    research: 'Research Areas',
+    publications: 'Publications',
+    funding: 'Grants & Funding',
+    team: 'Lab Members',
+    collaborators: 'Collaborators',
+    awards: 'Awards & Honours',
+    news: 'News & Social Media',
+    contact: 'Contact'
+  };
+
+  function showPage(id) {
+    if (!id) id = 'home';
+    // hide all, show target
+    document.querySelectorAll('section[id]').forEach(s => s.classList.remove('page-active'));
+    const target = document.getElementById(id);
+    if (target) {
+      target.classList.add('page-active');
+      window.scrollTo(0, 0);
+    }
+    // nav active state
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
+    });
+    // breadcrumb
+    const bc = document.getElementById('breadcrumb');
+    const lbl = document.getElementById('crumb-label');
+    if (id === 'home') {
+      bc.classList.add('hidden');
+    } else {
+      bc.classList.remove('hidden');
+      lbl.textContent = PAGE_LABELS[id] || id;
+    }
+    // page title
+    document.title = PAGE_TITLES[id] || PAGE_TITLES.home;
+    // update hash without triggering hashchange loop
+    history.pushState({ page: id }, '', '#' + id);
+  }
+
+  // intercept all nav link clicks
+  document.querySelectorAll('.nav-links a, a.nav-brand').forEach(a => {
+    a.addEventListener('click', function(e) {
+      const href = this.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        e.preventDefault();
+        showPage(href.slice(1));
       }
     });
-  }, { rootMargin: '-50% 0px -50% 0px' });
+  });
 
-  sections.forEach(s => observer.observe(s));
+  // also intercept any internal anchor clicks across the page
+  document.addEventListener('click', function(e) {
+    const a = e.target.closest('a[href^="#"]');
+    if (!a) return;
+    const id = a.getAttribute('href').slice(1);
+    const sectionIds = ['home','about','research','publications','funding','team','collaborators','awards','news','contact'];
+    if (sectionIds.includes(id)) {
+      e.preventDefault();
+      showPage(id);
+    }
+  });
+
+  // back/forward button support
+  window.addEventListener('popstate', function(e) {
+    const id = (e.state && e.state.page) || location.hash.slice(1) || 'home';
+    showPage(id);
+  });
+
+  // on load — check hash
+  (function init() {
+    const id = location.hash ? location.hash.slice(1) : 'home';
+    showPage(id);
+  })();
 </script>
 
 </body>
